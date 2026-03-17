@@ -1,8 +1,8 @@
-- setup image nginx docker-compose
-- specs : pouvoir fournir un fichier (.csv ou .json ou ...) qui donne des maps
-N° de port : String
-et qui affiche ça dans une page web 
-- qui a un bouton pour refresh
-? qui a un bouton pour replace
-? qui a un bouton pour add/remove une entry
+V	setup image nginx docker-compose
+	specs : pouvoir fournir un fichier (.csv ou .json ou ...) qui donne des maps
+	N° de port : String
+	et qui affiche ça dans une page web 
+	- qui a un bouton pour refresh
+	? qui a un bouton pour replace
+	? qui a un bouton pour add/remove une entry
 

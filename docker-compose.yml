@@ -3,9 +3,8 @@ services:
     image: nginx:latest
     container_name: UrMainPage
     volumes:
-     - ./templates:/etc/nginx/templates
-    ports:
-     - "80:80"
+     - ./templates:/etc/nginx/templates:ro
+     - ./content:/content:ro
     env_file:
      - .env
     network_mode: host

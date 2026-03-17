@@ -1,0 +1,11 @@
+server{
+	server_name ${NGINX_HOST};
+	location / {
+		alias "/content/";
+		try_files $uri $uri/ /index.html =404;
+		autoindex on;
+		expires max;
+	}
+	listen ${NGINX_PORT};
+}
+
