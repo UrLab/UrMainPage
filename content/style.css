@@ -1,0 +1,14 @@
+:root {
+  color-scheme: dark;
+}
+
+html {
+	display: inline;
+	height: 100%;
+	font-family: 'Monocraft', 'Monospace', 'Courier New', sans-serif;
+	font-size: normal;
+	background-color: #1b1111;
+	text-align: center;
+	margin: 10px 10px 10px 10px;
+}
+
