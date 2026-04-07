@@ -14,7 +14,7 @@ class Service:
 		self.name = name
 	
 	def toHTML(self, ip):
-		return BULLET.format(f"https://{ip}:{self.port}", self.name)
+		return BULLET.format(f"http://{ip}:{self.port}", self.name)
 
 	def __gt__(self, other): # self > other ?
 		return self.port > other.port
@@ -25,7 +25,7 @@ def printSupport(givenSuffix):
 	print(SUPPORT)
 
 def usageExit():
-	USAGE = f"Usage:\n\tpython3 src/{argv[0]} <host-name> <ports-file>"
+	USAGE = f"Usage:\n\tpython3 src/{argv[0]} <ports-file> <ip>"
 	print(USAGE)
 	exit(1)
 
