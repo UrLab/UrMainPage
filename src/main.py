@@ -1,12 +1,21 @@
 from sys import argv
+from pathlib import Path
+
+HTML_HEADER = "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"index.css\">\n</head>\n<body>\n\t<h1>Index</h1>\n\t<ul>\n"
+HTML_TAIL = "\t</ul>\n</body>\n"
+BULLET = "\t\t<li><a href=\"{0}\">{1}</a></li>\n"
+OUTPUTFILE = Path.cwd() / "index.html"
 
 class Service:
 	def __init__(self, port, name):
 		self.port = int(port)
-		if port < 0 or port >= 2**16:
+		if self.port < 0 or self.port >= 2**16:
 			raise ValueError(f"Invalid port found for service {name} : {port}")
 		self.name = name
 	
+	def toHTML(self, ip):
+		return BULLET.format(f"https://{ip}:{self.port}", self.name)
+
 	def __gt__(self, other): # self > other ?
 		return self.port > other.port
 
@@ -21,42 +30,60 @@ def usageExit():
 	exit(1)
 
 def checkArgv():
-	if len(argv) != 2:
+	if len(argv) != 3:
 		usageExit()
+	try:
+		assert len(argv[2].split(".")) == 4
+		for i in argv[2].split("."):
+			a = int(i)
+	except:
+		raise ValueError("Second argument is not an IPv4")
+
+def initFile(filename):
+	return Path.cwd() / filename
 
 def extractFromCSVFile(file):
 	with open(file) as f:
-		text = f.read()
-	services = [Service(i.split(",")) for i in text.split("\n")]
+		lines = f.read().split("\n")
+	lines = [i.split(",") for i in lines if i != ""]
+	services = [Service(i[0], i[1]) for i in lines]
 	return sorted(services, key=lambda t:t.port)
 
 def extractServicesFromFile(file):
 	if file.suffix == ".csv":
-		services = extractFromCSVFile(file)
+		return extractFromCSVFile(file)
 	else:
 		printSupport(file.suffix)
 		usageExit()
 
-def listToHTML(services):
-	html = ""
+def listToHTML(services, ip):
+	html = HTML_HEADER
 	for service in services:
-		
+		html += service.toHTML(ip)
+	html += HTML_TAIL
+	return html
 
 def handleError(exception):
+	raise Exception
 	print("The program encountered an error :")
-	if hasattr(exception, message):
-		print(e.message)
-	else:
-		print(e)
+	try:
+		print(exception.message)
+	except:
+		print(exception)
+
+def writeToHTMLIndexFile(content):
+	with open(OUTPUTFILE, "w") as f:
+		f.write(content)
+	print(f"Written to {OUTPUTFILE}")
 
 def main():
 	try:
 		checkArgv()
 		file = initFile(argv[1])
+		ip = argv[2]
 		services = extractServicesFromFile(file)
-		content = listToHTML(services)
-		html = buildHTMLIndex(content)
-		writeToHTMLIndexFile(html)
+		content = listToHTML(services, ip)
+		writeToHTMLIndexFile(content)
 	except Exception as e:
 		handleError(e)
 		exit(1)
