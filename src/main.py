@@ -7,14 +7,15 @@ BULLET = "\t\t<li><a href=\"{0}\">{1}</a></li>\n"
 OUTPUTFILE = Path.cwd() / "index.html"
 
 class Service:
-	def __init__(self, port, name):
+	def __init__(self, ip, port, name):
 		self.port = int(port)
 		if self.port < 0 or self.port >= 2**16:
 			raise ValueError(f"Invalid port found for service {name} : {port}")
 		self.name = name
+		self.ip = ip
 	
-	def toHTML(self, ip):
-		return BULLET.format(f"http://{ip}:{self.port}", self.name)
+	def toHTML(self):
+		return BULLET.format(f"http://{self.ip}:{self.port}", self.name)
 
 	def __gt__(self, other): # self > other ?
 		return self.port > other.port
@@ -25,7 +26,7 @@ def printSupport(givenSuffix):
 	print(SUPPORT)
 
 def usageExit():
-	USAGE = f"Usage:\n\tpython3 src/{argv[0]} <ports-file> <ip>"
+	USAGE = f"Usage:\n\tpython3 src/{argv[0]} <ports-file>"
 	print(USAGE)
 	exit(1)
 
@@ -46,7 +47,7 @@ def extractFromCSVFile(file):
 	with open(file) as f:
 		lines = f.read().split("\n")
 	lines = [i.split(",") for i in lines if i != ""]
-	services = [Service(i[0], i[1]) for i in lines]
+	services = [Service(i[0], i[1], i[2]) for i in lines]
 	return sorted(services, key=lambda t:t.port)
 
 def extractServicesFromFile(file):
@@ -56,10 +57,10 @@ def extractServicesFromFile(file):
 		printSupport(file.suffix)
 		usageExit()
 
-def listToHTML(services, ip):
+def listToHTML(services):
 	html = HTML_HEADER
 	for service in services:
-		html += service.toHTML(ip)
+		html += service.toHTML()
 	html += HTML_TAIL
 	return html
 
@@ -78,11 +79,13 @@ def writeToHTMLIndexFile(content):
 
 def main():
 	try:
-		checkArgv()
+		#checkArgv()
+		if len(argv) != 2:
+			usageExit()
 		file = initFile(argv[1])
-		ip = argv[2]
+		#ip = argv[2]
 		services = extractServicesFromFile(file)
-		content = listToHTML(services, ip)
+		content = listToHTML(services)
 		writeToHTMLIndexFile(content)
 	except Exception as e:
 		handleError(e)
