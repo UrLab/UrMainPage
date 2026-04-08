@@ -1,5 +1,5 @@
 server{
-	server_name ${NGINX_HOST};
+	server_name ${NGINX_HOST} default;
 	location / {
 		alias "/content/";
 		try_files $uri $uri/ /index.html =404;
